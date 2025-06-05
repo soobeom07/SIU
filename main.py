@@ -61,3 +61,6 @@ st.plotly_chart(fig2, use_container_width=True)
 
 # 푸터
 st.caption("데이터 출처: 공공데이터포털 / 서울열린데이터광장 등 공개 데이터")
+streamlit
+plotly
+
