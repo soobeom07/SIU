@@ -3,8 +3,8 @@ import pandas as pd
 import plotly.express as px
 
 # 데이터 불러오기
-df1 = pd.read_csv("동단위_데이터.csv")  # 동 단위 데이터 파일명에 맞게 수정
-df2 = pd.read_csv("구단위_데이터.csv", encoding="cp949")  # 구 단위 데이터
+df1 = pd.read_csv("dong_level_data.csv", encoding="utf-8")  # 동 단위 데이터
+df2 = pd.read_csv("gu_level_data.csv", encoding="cp949")    # 구 단위 데이터
 
 # 컬럼명 정리
 df1 = df1.rename(columns={
@@ -61,5 +61,6 @@ st.plotly_chart(fig2, use_container_width=True)
 
 # 푸터
 st.caption("데이터 출처: 공공데이터포털 / 서울열린데이터광장 등 공개 데이터")
+
 
 
