@@ -1,3 +1,4 @@
+st.write("🔍 현재 데이터프레임 컬럼 목록:", df.columns.tolist())
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -54,5 +55,5 @@ fig2 = px.scatter(df,
                       '거래금액_백만원': '거래 금액 (백만원)'
                   })
 st.plotly_chart(fig2, use_container_width=True)
-st.write("🔍 데이터프레임 컬럼 목록:", df.columns.tolist())
+
 
