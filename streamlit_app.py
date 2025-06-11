@@ -57,3 +57,21 @@ st.plotly_chart(fig2, use_container_width=True)
 
 # 출처
 st.caption("데이터 출처: 인천시 공개 데이터")
+# 월별 평균 거래금액 시계열 차트 ---------------------
+df['계약일'] = pd.to_datetime(df['계약일'])
+df['월'] = df['계약일'].dt.to_period('M')
+df_monthly = df.groupby(['월', '지역'])['거래금액_백만원'].mean().reset_index()
+df_monthly['월'] = df_monthly['월'].astype(str)
+
+지역_선택 = st.multiselect("📌 분석할 지역을 선택하세요", df['지역'].unique(), default=['서구', '연수구'])
+
+df_filtered = df_monthly[df_monthly['지역'].isin(지역_선택)]
+
+fig_ts = px.line(df_filtered,
+                 x='월',
+                 y='거래금액_백만원',
+                 color='지역',
+                 title='📈 지역별 월별 평균 거래금액 추이',
+                 labels={'월': '월', '거래금액_백만원': '거래 금액 (백만원)'})
+
+st.plotly_chart(fig_ts, use_container_width=True)
