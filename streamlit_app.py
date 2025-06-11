@@ -18,7 +18,7 @@ df = df.rename(columns={
     '거래신고 금액(백만원)': '거래금액_백만원'
 })
 
-# 데이터 타입 정리 (숫자형 변환)
+# 숫자형 컬럼 변환 및 결측값 처리
 numeric_cols = ['거래건수', '토지면적_㎡', '건축물면적_㎡', '거래금액_백만원']
 df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors='coerce').fillna(0)
 
@@ -26,7 +26,7 @@ df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors='coerce').fillna
 지역_선택 = st.sidebar.selectbox("📍 지역 선택", df['지역'].unique())
 filtered = df[df['지역'] == 지역_선택]
 
-# 요약 정보
+# 요약 정보 출력
 st.subheader(f"📌 {지역_선택} 거래 요약")
 st.write(filtered)
 
@@ -46,7 +46,9 @@ st.plotly_chart(fig, use_container_width=True)
 
 # 산점도: 면적 대비 거래금액
 st.subheader("📈 면적 대비 거래 금액 분석")
-fig2 = px.scatter(df,
+df_scatter = df[(df['토지면적_㎡'] > 0) & (df['거래금액_백만원'] > 0)]
+
+fig2 = px.scatter(df_scatter,
                   x='토지면적_㎡', y='거래금액_백만원',
                   size='건축물면적_㎡', hover_name='지역',
                   trendline='ols',
