@@ -60,3 +60,6 @@ st.plotly_chart(fig2, use_container_width=True)
 
 # 데이터 출처 표시
 st.markdown("데이터 출처: 인천시 공개 데이터")
+st.write("📌 컬럼명 리스트:")
+st.write(df.columns.tolist())
+
