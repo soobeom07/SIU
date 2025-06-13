@@ -23,13 +23,19 @@ if uploaded_file is not None:
         region_col = st.selectbox("지역 컬럼 선택", df.columns)
         price_col = st.selectbox("가격 컬럼 선택", df.columns)
 
-        # 날짜 전처리
-        df[date_col] = df[date_col].astype(str).str.strip()  # 공백 제거
-        df[date_col] = df[date_col].str.replace(".", "-").str.replace("/", "-")  # . 또는 / → -
-        df[date_col] = pd.to_datetime(df[date_col], format="mixed", errors="coerce")
+        # ✅ 선택한 컬럼만 유지
+        df = df[[date_col, region_col, price_col]].copy()
 
-        # 유효하지 않은 날짜 제거
+        # ✅ 날짜 전처리 (자동 포맷 인식 + 정규화)
+        df[date_col] = df[date_col].astype(str).str.strip()
+        df[date_col] = df[date_col].str.replace(r"[./]", "-", regex=True)
+        df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
         df = df.dropna(subset=[date_col])
+
+        # ✅ 가격 정제
+        df[price_col] = df[price_col].astype(str).str.replace(",", "").str.replace("원", "")
+        df[price_col] = pd.to_numeric(df[price_col], errors="coerce")
+        df = df.dropna(subset=[price_col])
 
         # 지역 선택
         selected_regions = st.multiselect(
@@ -39,18 +45,24 @@ if uploaded_file is not None:
         # 필터링
         filtered_df = df[df[region_col].isin(selected_regions)]
 
+        # ✅ 날짜 정렬
+        filtered_df = filtered_df.sort_values(by=date_col)
+
         # 시각화
-        st.subheader("📈 지역별 가격 추이")
-        fig = px.line(
-            filtered_df,
-            x=date_col,
-            y=price_col,
-            color=region_col,
-            markers=True,
-            labels={date_col: "날짜", price_col: "가격", region_col: "지역"},
-            title="지역별 부동산 가격 변동"
-        )
-        st.plotly_chart(fig, use_container_width=True)
+        if filtered_df.empty:
+            st.warning("선택한 조건에 해당하는 데이터가 없습니다.")
+        else:
+            st.subheader("📈 지역별 가격 추이")
+            fig = px.line(
+                filtered_df,
+                x=date_col,
+                y=price_col,
+                color=region_col,
+                markers=True,
+                labels={date_col: "날짜", price_col: "가격", region_col: "지역"},
+                title="지역별 부동산 가격 변동"
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
     except Exception as e:
         st.error(f"❌ 오류 발생: {e}")
