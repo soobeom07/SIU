@@ -26,7 +26,7 @@ if uploaded_file is not None:
         # 날짜 전처리
         df[date_col] = df[date_col].astype(str).str.strip()  # 공백 제거
         df[date_col] = df[date_col].str.replace(".", "-").str.replace("/", "-")  # . 또는 / → -
-        df[date_col] = pd.to_datetime(df[date_col], format="%Y-%m", errors="coerce")
+        df[date_col] = pd.to_datetime(df[date_col], format="mixed", errors="coerce")
 
         # 유효하지 않은 날짜 제거
         df = df.dropna(subset=[date_col])
